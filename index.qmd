@@ -34,6 +34,10 @@ race_wide <- fl_race |>
 fl_map <- left_join(fl_geo, race_wide, by = "GEOID") |>
   st_transform(4326)
 
+# County center points for on-map text labels
+fl_centers <- suppressWarnings(st_point_on_surface(fl_map)) |>
+  mutate(county_name = str_remove(NAME, " County, Florida"))
+
 # Create hover labels summarizing all four groups for each county
 labels <- sprintf(
   "<strong>%s</strong><br/>
@@ -101,8 +105,29 @@ leaflet(fl_map, width = "100%", height = "540px") |>
     label = labels,
     highlightOptions = highlightOptions(weight = 2, color = "#444", fillOpacity = 0.85, bringToFront = TRUE)
   ) |>
+  addTiles(
+    urlTemplate = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+    options = tileOptions(opacity = 0.85)
+  ) |>
+  addLabelOnlyMarkers(
+    data = fl_centers,
+    group = "County Labels",
+    label = ~county_name,
+    labelOptions = labelOptions(
+      noHide = TRUE,
+      direction = "center",
+      textOnly = TRUE,
+      style = list(
+        "font-size" = "10px",
+        "font-weight" = "600",
+        "color" = "#1a202c",
+        "text-shadow" = "0 0 3px #ffffff, 0 0 3px #ffffff"
+      )
+    )
+  ) |>
   addLayersControl(
     baseGroups = c("Hispanic Change", "White Change", "Black Change", "Asian Change"),
+    overlayGroups = c("County Labels"),
     options = layersControlOptions(collapsed = FALSE)
   ) |>
   addLegend(
@@ -137,7 +162,9 @@ leaflet(fl_map, width = "100%", height = "540px") |>
           }
         }
       }
-      updateLegends('Hispanic Change');
+      setTimeout(function() {
+        updateLegends('Hispanic Change');
+      }, 100);
       map.on('baselayerchange', function(e) {
         updateLegends(e.name);
       });

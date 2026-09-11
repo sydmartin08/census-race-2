@@ -18,3 +18,25 @@ p.subtitle {
   font-size: 1.15rem;
   margin-bottom: 1.5rem;
 }
+
+/* Map legend (key) styling */
+.info.legend {
+  background: rgba(255, 255, 255, 0.95) !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  color: #222 !important;
+}
+
+.legend-hisp {
+  display: block;
+}
+
+.legend-white,
+.legend-black,
+.legend-asian {
+  display: none;
+}
+
