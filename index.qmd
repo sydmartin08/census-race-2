@@ -104,3 +104,39 @@ leaflet(fl_map, width = "100%", height = "540px") |>
     options = layersControlOptions(collapsed = FALSE)
   )
 ```
+
+## Largest Growth: Top 5 Counties
+
+Central and South Florida experienced the fastest demographic changes over these two decades, led by rapid growth in Hispanic population share:
+
+```{r}
+#| label: top-counties-plot
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 4
+
+top_hispanic <- fl_map |>
+  st_drop_geometry() |>
+  mutate(county = str_remove(NAME, " County, Florida")) |>
+  slice_max(diff_hisp, n = 5)
+
+ggplot(top_hispanic, aes(x = diff_hisp, y = reorder(county, diff_hisp))) +
+  geom_col(fill = "#d95f02", width = 0.6) +
+  geom_text(aes(label = sprintf("+%0.1f pts", diff_hisp)), hjust = -0.15, size = 3.8) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.18))) +
+  labs(
+    title = "Top 5 Florida Counties by Hispanic Population Growth",
+    subtitle = "Percentage point increase from 2000 to 2020 Decennial Censuses",
+    x = "Percentage Point Increase",
+    y = NULL,
+    caption = "Source: U.S. Census Bureau"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank(),
+    plot.title.position = "plot"
+  )
+```
+
