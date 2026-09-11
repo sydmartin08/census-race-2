@@ -1,1 +1,20 @@
-/* css styles */
+/* Custom styling for census dashboard */
+
+.leaflet-container {
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+h1.title {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+p.subtitle {
+  color: #555;
+  font-size: 1.15rem;
+  margin-bottom: 1.5rem;
+}

@@ -1,5 +1,6 @@
 ---
 title: "Florida Census Demographics (2000–2020)"
+subtitle: "Exploring two decades of racial and ethnic population shifts across Florida counties"
 ---
 
 ```{r}
