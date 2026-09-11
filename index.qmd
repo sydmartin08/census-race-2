@@ -12,6 +12,7 @@ library(tidyverse)
 library(sf)
 library(leaflet)
 library(htmltools)
+library(htmlwidgets)
 
 # Load county boundaries and decennial census data
 fl_geo  <- read_rds("data/fl_geo.rds")
@@ -103,7 +104,45 @@ leaflet(fl_map, width = "100%", height = "540px") |>
   addLayersControl(
     baseGroups = c("Hispanic Change", "White Change", "Black Change", "Asian Change"),
     options = layersControlOptions(collapsed = FALSE)
-  )
+  ) |>
+  addLegend(
+    position = "bottomright", pal = pal_hisp, values = ~diff_hisp,
+    title = "Hispanic (% pts)", className = "info legend legend-hisp"
+  ) |>
+  addLegend(
+    position = "bottomright", pal = pal_white, values = ~diff_white,
+    title = "White (% pts)", className = "info legend legend-white"
+  ) |>
+  addLegend(
+    position = "bottomright", pal = pal_black, values = ~diff_black,
+    title = "Black (% pts)", className = "info legend legend-black"
+  ) |>
+  addLegend(
+    position = "bottomright", pal = pal_asian, values = ~diff_asian,
+    title = "Asian (% pts)", className = "info legend legend-asian"
+  ) |>
+  onRender("
+    function(el, x) {
+      var map = this;
+      function updateLegends(active) {
+        var legends = {
+          'Hispanic Change': document.querySelector('.legend-hisp'),
+          'White Change':    document.querySelector('.legend-white'),
+          'Black Change':    document.querySelector('.legend-black'),
+          'Asian Change':    document.querySelector('.legend-asian')
+        };
+        for (var key in legends) {
+          if (legends[key]) {
+            legends[key].style.display = (key === active) ? 'block' : 'none';
+          }
+        }
+      }
+      updateLegends('Hispanic Change');
+      map.on('baselayerchange', function(e) {
+        updateLegends(e.name);
+      });
+    }
+  ")
 ```
 
 ## Largest Growth: Top 5 Counties
